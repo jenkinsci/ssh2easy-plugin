@@ -1,0 +1,35 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout permission="${app.ADMINISTER}" xmlns:local="local" norefresh="true">
+        <st:include it="${app}" page="sidepanel.jelly"/>
+
+        <d:taglib uri="local">
+          <!-- table to show a map -->
+          <d:tag name="feature">
+            <t:summary icon="${icon}"
+                       href="${href}" iconOnly="true">
+              <div class="link"><a href="${href}">${title}</a></div>
+              <div style="color:gray; text-decoration:none;">
+                <d:invokeBody />
+              </div>
+            </t:summary>
+          </d:tag>
+        </d:taglib>
+
+        <l:main-panel>
+            <h1>
+                <img src="${rootURL}/plugin/cloudci/icon/${it.iconFileName}" alt="${it.displayName}"/>
+                ${it.displayName}
+            </h1>
+
+            <table style="padding-left: 2em;" id="management-links">
+              <local:feature icon="fingerprint.gif" href="manage-projects" title="${it.manageProjectsName}">
+                ${%Manage Projects}
+              </local:feature>
+              <local:feature icon="user.gif" href="assign-members" title="${it.assignProjectsName}">
+                ${%Assign Members}
+              </local:feature>
+            </table>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

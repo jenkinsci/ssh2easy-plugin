@@ -1,0 +1,61 @@
+FTP plugin failed solutions:
+
+Step 1. back up older config file:
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+Step 2. vi /etc/ssh/sshd_config
+Step 3. set below items or replace it with below content:
+UsePAM yes
+PermitUserEnvironment yes
+Subsystem sftp /usr/libexec/openssh/sftp-server
+
+Step 4.  /sbin/service sshd restart
+
+or execute below shell:
+-------------------------------------------------------------------
+#!/bin/bash
+
+# Author:       Jerry Cai
+# CreateDate:   2012-10-30
+# Environment   Linux + Bash
+
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+sed -i '$a \UsePAM yes\nPermitUserEnvironment yes\nSubsystem sftp /usr/libexec/openssh/sftp-server' /etc/ssh/sshd_config
+/sbin/service sshd restart
+---------------------------------------------------------------------
+
+
+///////////////////////////////overall result sample ///////////////////////////////////////////
+#       $OpenBSD: sshd_config,v 1.69 2004/05/23 23:59:53 dtucker Exp $
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# This sshd was compiled with PATH=/usr/local/bin:/bin:/usr/bin
+
+# The strategy used for options in the default sshd_config shipped with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented.  Uncommented options change a
+# default value.
+
+Port 333
+Protocol 2
+SyslogFacility AUTHPRIV
+LoginGraceTime 60
+PermitRootLogin yes
+MaxAuthTries  2
+PubkeyAuthentication yes
+RhostsRSAAuthentication no
+HostbasedAuthentication no
+IgnoreUserKnownHosts yes
+PasswordAuthentication yes
+PermitEmptyPasswords no
+X11Forwarding no
+PrintMotd yes
+PrintLastLog yes
+TCPKeepAlive yes
+UsePrivilegeSeparation yes
+MaxStartups 10
+UsePAM yes
+PermitUserEnvironment yes
+Subsystem sftp /usr/libexec/openssh/sftp-server

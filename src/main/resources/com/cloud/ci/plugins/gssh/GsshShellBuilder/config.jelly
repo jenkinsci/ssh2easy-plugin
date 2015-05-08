@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  	<j:set var="helpURL" value="/plugin/cloudci" />
+
+  	<f:entry title="Disable" field="disable" help="${helpURL}/help-disable.html">
+  		<f:checkbox />
+  	</f:entry>
+  	
+    <f:entry title="Target Server" field="serverInfo"  help="${helpURL}/help-select.html" >
+		<f:select />
+    </f:entry>
+    <f:entry title="shell" field="shell" help="${helpURL}/help-script.html">
+		<f:textarea />
+  	</f:entry>
+</j:jelly>

@@ -1,0 +1,40 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:local="local">
+    <j:set var="helpURL" value="/plugin/cloudci" />
+    <l:layout permission="${app.ADMINISTER}" norefresh="true">
+        <st:include it="${app}" page="sidepanel.jelly"/>
+        <l:main-panel>
+          <f:form method="post" name="config" action="serverSubmit">
+              <f:section title="Server Center">
+			       <f:entry title="Server List :" description="add the server under this server group for your projects">
+				       <f:repeatable var="server" items="${descriptor.servers}">
+				        <table width="50%">
+					    <f:entry title="Server Group:">
+					      <select class="setting-input" name="gssh.s.wrapper.serverGroupName" help="${helpURL}/help-serverselect.html">
+					        <j:forEach var="sg" items="${descriptor.serverGroups}">
+					        	<f:option selected="${sg.groupName==server.serverGroupName}">${sg.groupName}</f:option>
+					         </j:forEach>
+					      </select>
+					    </f:entry>
+				        <f:entry title="Server Name" help="${helpURL}/help-name.html">
+				            <f:textbox name="gssh.s.wrapper.name" value="${server.name}"/>
+				        </f:entry>
+				       	<f:entry title="Server IP" help="${helpURL}/help-ip.html">
+				            <f:textbox name="gssh.s.wrapper.ip" value="${server.ip}"/>
+				        </f:entry>
+				        <f:entry title="">
+				            <div align="right">
+				              <f:repeatableDeleteButton />
+				            </div>
+				        </f:entry>
+				        </table>
+				      </f:repeatable>
+			    </f:entry>
+			  </f:section>
+            <f:block>
+              <f:submit value="${%Save}" />
+            </f:block>
+          </f:form>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

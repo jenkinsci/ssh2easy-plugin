@@ -1,0 +1,20 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  	<j:set var="helpURL" value="/plugin/cloudci" />
+
+  	<f:entry title="Disable" field="disable" help="${helpURL}/help-disable.html">
+  		<f:checkbox />
+  	</f:entry>
+  	
+    <f:entry title="Target Server" field="serverInfo"  help="${helpURL}/help-select.html" >
+		<f:select />
+    </f:entry>  	
+    <f:entry title="remoteFile" field="remoteFile" help="${helpURL}/help-filepath.html">
+		<f:textbox />
+  	</f:entry>
+    <f:entry title="localFolder" field="localFolder" help="${helpURL}/help-location.html">
+		<f:textbox />
+  	</f:entry>
+    <f:entry title="fileName" field="fileName" help="${helpURL}/help-ftpfilename.html">
+		<f:textbox />
+  	</f:entry>
+</j:jelly>

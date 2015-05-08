@@ -1,0 +1,70 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:local="local">
+    <l:layout permission="${app.ADMINISTER}" norefresh="true">
+        <st:include it="${app}" page="sidepanel.jelly"/>
+        <l:main-panel>
+          <link rel="stylesheet" href="${rootURL}${app.VIEW_RESOURCE_PATH}/hudson/security/table.css" type="text/css" />
+          <link rel="stylesheet" href="${rootURL}/plugin/cloudci/css/project-strategy.css" type="text/css" />
+          <script type="text/javascript" src="${rootURL}/plugin/cloudci/js/table.js" />
+
+          <j:set var="globalGroups" value="${it.strategy.descriptor.getGroups(it.strategy.GLOBAL)}"/>
+          <j:set var="projectGroups" value="${it.strategy.descriptor.getGroups(it.strategy.PROJECT)}"/>
+
+          <d:taglib uri="local">
+            <d:tag name="roleRow">
+              <td class="start">
+                <a href="#">
+                  <img alt="remove" src="${imagesURL}/16x16/stop.gif"/>
+                </a>
+              </td>
+              <td class="left-most">${title}</td>
+              <j:if test="${!attrs.global}">
+                <td width="*" class="in-place-edit-viewNamePattern">
+                  ${h.escape(attrs.project.viewNamePattern.toString())}
+                  <input type="hidden" name="[viewNamePattern]" value="${attrs.project.viewNamePattern}" />
+                </td>
+                <td width="*" class="in-place-edit-jobNamePattern">
+                  ${h.escape(attrs.project.jobNamePattern.toString())}
+                  <input type="hidden" name="[jobNamePattern]" value="${attrs.project.jobNamePattern}" />
+                </td>
+              </j:if>
+              <j:forEach var="g" items="${attrs.global?globalGroups:projectGroups}">
+                <j:forEach var="p" items="${g.permissions}">
+                  <j:if test="${attrs.global?it.strategy.descriptor.showPermission(it.strategy.GLOBAL, p):it.strategy.descriptor.showPermission(it.strategy.PROJECT, p)}">
+                    <td width="*">
+                      <f:checkbox name="[${p.id}]" checked="${attrs.project.hasPermission(p)}"/>
+                    </td>
+                  </j:if>
+                </j:forEach>
+              </j:forEach>
+              <td class="stop">
+                <a href="#">
+                  <img alt="remove" src="${imagesURL}/16x16/stop.gif"/>
+                </a>
+              </td>
+            </d:tag>
+          </d:taglib>
+
+          <f:form method="post" name="config" action="projectsSubmit">
+            <h1>
+              <img src="${imagesURL}/48x48/fingerprint.gif" alt="${it.displayName}" />
+              ${it.displayName}
+            </h1>
+
+            <f:section title="Define Global ACL">
+              <f:rowSet name="globalACL">
+                <f:block><st:include page="manage-global-acl.jelly" optional="true" /></f:block>
+              </f:rowSet>
+            </f:section>
+            <f:section title="Define Project ACL">
+              <f:rowSet name="projectACL">
+                <f:block><st:include page="manage-project-acl.jelly" optional="true" /></f:block>
+              </f:rowSet>
+            </f:section>
+            <f:block>
+              <f:submit value="${%Save}" />
+            </f:block>
+          </f:form>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
