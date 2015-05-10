@@ -2,12 +2,16 @@ package jenkins.plugins.ssh2easy.acl;
 
 import hudson.Extension;
 import hudson.model.Descriptor.FormException;
-import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.security.AuthorizationStrategy;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import javax.servlet.ServletException;
+
+import jenkins.model.Jenkins;
+
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -17,7 +21,7 @@ public class ProjectStrategyConfig extends ManagementLink {
 	@Override
 	public String getIconFileName() {
 		String icon = null;
-		if (Hudson.getInstance().getAuthorizationStrategy() instanceof CloudCIAuthorizationStrategy) {
+		if (Jenkins.getInstance().getAuthorizationStrategy() instanceof CloudCIAuthorizationStrategy) {
 			icon = "cloud_ci_logo.png";
 		}
 		return icon;
@@ -46,7 +50,7 @@ public class ProjectStrategyConfig extends ManagementLink {
 	}
 
 	public AuthorizationStrategy getStrategy() {
-		AuthorizationStrategy strategy = Hudson.getInstance()
+		AuthorizationStrategy strategy = Jenkins.getInstance()
 				.getAuthorizationStrategy();
 		if (strategy instanceof CloudCIAuthorizationStrategy) {
 			return strategy;
@@ -58,7 +62,7 @@ public class ProjectStrategyConfig extends ManagementLink {
 	public void doProjectsSubmit(StaplerRequest req, StaplerResponse rsp)
 			throws IOException, UnsupportedEncodingException, ServletException,
 			FormException {
-		Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+		Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 		CloudCIAuthorizationStrategy.DESCRIPTOR.doProjectsSubmit(req, rsp);
 		rsp.sendRedirect(".");
 	}
@@ -66,7 +70,7 @@ public class ProjectStrategyConfig extends ManagementLink {
 	public void doAssignSubmit(StaplerRequest req, StaplerResponse rsp)
 			throws IOException, UnsupportedEncodingException, ServletException,
 			FormException {
-		Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+		Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 		CloudCIAuthorizationStrategy.DESCRIPTOR.doAssignSubmit(req, rsp);
 		rsp.sendRedirect(".");
 	}

@@ -5,9 +5,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
 import hudson.Extension;
 import hudson.model.Computer;
-import hudson.model.Hudson;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.View;
@@ -17,6 +17,7 @@ import hudson.security.GlobalMatrixAuthorizationStrategy;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
 import hudson.security.SidACL;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -27,7 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+
 import javax.servlet.ServletException;
+
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.acegisecurity.Authentication;
@@ -317,24 +321,24 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 		public void doProjectsSubmit(StaplerRequest req, StaplerResponse rsp)
 				throws UnsupportedEncodingException, ServletException,
 				FormException, IOException {
-			Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+			Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 
 			req.setCharacterEncoding("UTF-8");
 			JSONObject json = req.getSubmittedForm();
 			AuthorizationStrategy strategy = this.newInstance(req, json);
-			Hudson.getInstance().setAuthorizationStrategy(strategy);
-			Hudson.getInstance().save();
+			Jenkins.getInstance().setAuthorizationStrategy(strategy);
+			Jenkins.getInstance().save();
 		}
 
 		@SuppressWarnings("unchecked")
 		public void doAssignSubmit(StaplerRequest req, StaplerResponse rsp)
 				throws UnsupportedEncodingException, ServletException,
 				FormException, IOException {
-			Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+			Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 
 			req.setCharacterEncoding("UTF-8");
 			JSONObject json = req.getSubmittedForm();
-			AuthorizationStrategy oldStrategy = Hudson.getInstance()
+			AuthorizationStrategy oldStrategy = Jenkins.getInstance()
 					.getAuthorizationStrategy();
 
 			if (json.has(AclType.GLOBAL.getType())
@@ -365,7 +369,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 						}
 					}
 				}
-				Hudson.getInstance().save();
+				Jenkins.getInstance().save();
 			}
 		}
 
@@ -373,7 +377,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 		@Override
 		public AuthorizationStrategy newInstance(StaplerRequest req,
 				JSONObject formData) throws FormException {
-			AuthorizationStrategy oldStrategy = Hudson.getInstance()
+			AuthorizationStrategy oldStrategy = Jenkins.getInstance()
 					.getAuthorizationStrategy();
 			CloudCIAuthorizationStrategy strategy;
 
@@ -475,7 +479,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 
 		public static final String getCurrentUser() {
 			PrincipalSid currentUser = new PrincipalSid(
-					Hudson.getAuthentication());
+					Jenkins.getAuthentication());
 			return currentUser.getPrincipal();
 		}
 
@@ -504,7 +508,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 				groups = new ArrayList<PermissionGroup>(
 						PermissionGroup.getAll());
 				groups.remove(PermissionGroup.get(Permission.class));
-				groups.remove(PermissionGroup.get(Hudson.class));
+				groups.remove(PermissionGroup.get(Jenkins.class));
 				groups.remove(PermissionGroup.get(Computer.class));
 				groups.remove(PermissionGroup.get(View.class));
 				break;
