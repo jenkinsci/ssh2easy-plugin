@@ -4,8 +4,8 @@
         <st:include it="${app}" page="sidepanel.jelly"/>
         <l:main-panel>
           <link rel="stylesheet" href="${rootURL}${app.VIEW_RESOURCE_PATH}/hudson/security/table.css" type="text/css" />
-          <link rel="stylesheet" href="${rootURL}/plugin/ssh2easy/css/project-strategy.css" type="text/css" />
-          <script type="text/javascript" src="${rootURL}/plugin/ssh2easy/js/table.js" />
+          <link rel="stylesheet" href="${rootURL}/plugin/ssh2easy-plugin/css/project-strategy.css" type="text/css" />
+          <script type="text/javascript" src="${rootURL}/plugin/ssh2easy-plugin/js/table.js" />
 
           <j:set var="globalGroups" value="${it.strategy.descriptor.getGroups(it.strategy.GLOBAL)}"/>
           <j:set var="projectGroups" value="${it.strategy.descriptor.getGroups(it.strategy.PROJECT)}"/>

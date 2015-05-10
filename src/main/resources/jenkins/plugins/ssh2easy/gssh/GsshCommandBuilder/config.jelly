@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  	<j:set var="helpURL" value="/plugin/ssh2easy" />
+  	<j:set var="helpURL" value="/plugin/ssh2easy-plugin" />
   	
   	<f:entry title="Disable" field="disable" help="${helpURL}/help-disable.html">
   		<f:checkbox />

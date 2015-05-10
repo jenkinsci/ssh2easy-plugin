@@ -91,6 +91,9 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 				ACL base = item.getOwner().getACL();
 
 				CloudProject cloudProject = cloudProjects.get(AclType.PROJECT);
+				if(item == null || null == cloudProject){
+					return true;
+				}
 				Set<Project> matchedViewProjects = cloudProject
 						.getMatchedViewsProjects(item.getViewName());
 				String currentUserId = DescriptorImpl.getCurrentUser();
