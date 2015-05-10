@@ -1,0 +1,215 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:local="local">
+
+  <table id="projectAcls" class="center-align global-matrix-authorization-strategy-table" name="data">
+
+      <!-- The first row will show grouping -->
+      <tr class="group-row">
+        <td rowspan="2" class="start" />
+        <td rowspan="2" class="pane-header blank">
+          Project Name
+        </td>
+        <td rowspan="2" class="pane-header blank">
+          View Name Pattern
+        </td>
+        <td rowspan="2" class="pane-header blank">
+          Job Name Pattern
+        </td>
+        <j:forEach var="g" items="${projectGroups}">
+          <j:set var="cnt" value="${0}" />
+          <j:forEach var="p" items="${g.permissions}">
+            <j:if test="${it.strategy.descriptor.showPermission(it.strategy.PROJECT, p)}">
+              <j:set var="cnt" value="${cnt+1}"/>
+            </j:if>
+          </j:forEach>
+
+          <td class="pane-header" colspan="${cnt}">
+            ${g.title}
+          </td>
+        </j:forEach>
+        <td rowspan="2" class="stop" />
+      </tr>
+      <!-- The second row for individual permission -->
+      <tr class="caption-row">
+        <j:forEach var="g" items="${projectGroups}">
+          <j:forEach var="p" items="${g.permissions}">
+            <j:if test="${it.strategy.descriptor.showPermission(it.strategy.PROJECT, p)}">
+              <th class="pane" tooltip="${p.description}">
+                ${p.name}
+              </th>
+            </j:if>
+          </j:forEach>
+        </j:forEach>
+      </tr>
+      <j:set var="nbProjectAcls" value="${0}" />
+      <j:forEach var="project" items="${it.strategy.getProjectPlanMap(it.strategy.PROJECT)}">
+        <tr name="[${project.key.projectName}]" class="permission-row">
+          <local:roleRow title="${project.key.projectName}" project="${project.key}" global="${false}" />
+        </tr>
+        <j:set var="nbProjectAcls" value="${nbProjectAcls+1}"/>
+      </j:forEach>
+      <j:set var="id" value="${h.generateId()}"/>
+      <tr id="${id}" style="display:none" class="permission-row">
+        <local:roleRow role="${null}" global="${false}" />
+      </tr>
+      <!-- The last two rows are used to repeat the header (if more than 20 lines) -->
+      <j:if test="${nbProjectAcls ge 20}">
+        <tr class="caption-row">
+          <td rowspan="2" class="start" />
+          <td rowspan="2" class="pane-header blank">
+            Project Name:
+          </td>
+          <td rowspan="2" class="pane-header blank">
+            Project Name Pattern:
+          </td>
+          <j:forEach var="g" items="${projectGroups}">
+            <j:forEach var="p" items="${g.permissions}">
+              <j:if test="${it.strategy.descriptor.showPermission(it.strategy.PROJECT, p)}">
+                <th class="pane" tooltip="${p.description}">
+                  ${p.name}
+                </th>
+              </j:if>
+            </j:forEach>
+          </j:forEach>
+        </tr>
+        <tr class="group-row">
+          <j:forEach var="g" items="${projectGroups}">
+            <j:set var="cnt" value="${0}" />
+            <j:forEach var="p" items="${g.permissions}">
+              <j:if test="${it.strategy.descriptor.showPermission(it.strategy.PROJECT, p)}">
+                <j:set var="cnt" value="${cnt+1}"/>
+              </j:if>
+            </j:forEach>
+
+            <td class="pane-header" colspan="${cnt}">
+              ${g.title}
+            </td>
+          </j:forEach>
+          <td rowspan="2" class="stop" />
+        </tr>
+      </j:if>
+    </table>
+    <br /><br />
+    <f:entry title="Project Name:">
+      <f:textbox type="text" id="${id}text" />
+    </f:entry>
+	<f:entry help="plugin/ssh2easy/help/help-pattern.html" title="View Name Pattern:">
+      <f:textbox type="text" id="${id}viewNamePattern" />
+    </f:entry>
+    <f:entry help="plugin/ssh2easy/help/help-pattern.html" title="Job Name Pattern:">
+      <f:textbox type="text" id="${id}jobNamePattern" />
+    </f:entry>
+    <f:entry>
+      <input type="button" value="${%Add}" id="${id}button"/>
+    </f:entry>
+    
+    <script>
+      var tableHighlighter;
+      (function() {
+        <!-- place master outside the DOM tree so that it won't creep into the submitted form -->
+        var master = document.getElementById('${id}');
+        var table = master.parentNode;
+        table.removeChild(master);
+
+        makeButton($$('${id}button'), function (e) {
+          <!-- when 'add' is clicked... -->
+          var name = $$('${id}text').value;
+		  var viewNamePattern = $$('${id}viewNamePattern').value;
+          var jobNamePattern = $$('${id}jobNamePattern').value;
+          if(name=="") {
+            alert("Please enter a project name");
+            return;
+          }
+		 if(viewNamePattern=="") {
+            alert("Please enter a viewNamePattern");
+            return;
+          }
+          if(jobNamePattern=="") {
+            alert("Please enter a jobNamePattern");
+            return;
+          }
+          if(findElementsBySelector(table,"TR").find(function(n){return n.getAttribute("name")=='['+name+']';})!=null) {
+            alert("Entry for '"+name+"' already exists");
+            return;
+          }
+
+          if(document.importNode!=null)
+            copy = document.importNode(master,true);
+          else
+            copy = master.cloneNode(true); <!-- for IE -->
+          copy.removeAttribute("id");
+          copy.removeAttribute("style");
+          var child = copy.childNodes[1];
+          child.innerHTML = name;
+		  
+		  var viewElement= child.next();
+		  viewElement.innerHTML = viewNamePattern;
+
+          var hiddenViewNamePattern = document.createElement('input');
+          hiddenViewNamePattern.setAttribute('name', '[viewNamePattern]');
+          hiddenViewNamePattern.setAttribute('type', 'hidden');
+          hiddenViewNamePattern.setAttribute('value', viewNamePattern);
+          viewElement.appendChild(hiddenViewNamePattern);
+		  
+		  var jobElement= viewElement.next();
+          jobElement.innerHTML = jobNamePattern;
+
+          var hiddenJobNamePattern = document.createElement('input');
+          hiddenJobNamePattern.setAttribute('name', '[jobNamePattern]');
+          hiddenJobNamePattern.setAttribute('type', 'hidden');
+          hiddenJobNamePattern.setAttribute('value', jobNamePattern);
+          jobElement.appendChild(hiddenJobNamePattern);
+
+          copy.setAttribute("name",'['+name+']');
+          <j:if test="${nbProjectAcls lt 20}">
+            table.appendChild(copy);
+          </j:if>
+          <j:if test="${nbProjectAcls ge 20}">
+            table.insertBefore(copy,table.childNodes[table.rows.length-2]);
+          </j:if>
+          projecttableHighlighter.scan(copy);
+          Behaviour.applySubtree(findAncestor(table,"TABLE"));
+        });
+      })();
+
+      Event.observe(window, 'load', function(event) {
+         projecttableHighlighter = new TableHighlighter('projectAcls', 3, 2);
+      });
+
+      var deleteprojectAcls = function(e) {
+        e.onclick = function() {
+          var tr = findAncestor(this,"TR");
+          tr.parentNode.removeChild(tr);
+          return false;
+        }
+        e = null; <!-- avoid memory leak -->
+      }
+      Behaviour.register({"#projectAcls TD.stop A" : deleteprojectAcls});
+      Behaviour.register({"#projectAcls TD.start A" : deleteprojectAcls});
+	  Behaviour.register({"#projectAcls TD.in-place-edit-viewNamePattern" : function(e) {
+        e.ondblclick = function() {
+		
+		  if(this.childNodes.length == 2) {
+            this.innerHTML = '<input type="text" name="[viewNamePattern]" value="' + this.childNodes[1].value + '" size="' + (this.childNodes[1].value.length+10) + '"/>';
+          }
+          else {
+            this.innerHTML = this.childNodes[0].value.escapeHTML() + '<input type="hidden" name="[viewNamePattern]" value="' + this.childNodes[0].value + '"/>';
+          }
+          return false;
+        }
+        e = null; <!-- again and again, avoid memory leak -->
+      }});
+      Behaviour.register({"#projectAcls TD.in-place-edit-jobNamePattern" : function(e) {
+        e.ondblclick = function() {
+          if(this.childNodes.length == 2) {
+            this.innerHTML = '<input type="text" name="[jobNamePattern]" value="' + this.childNodes[1].value + '" size="' + (this.childNodes[1].value.length+10) + '"/>';
+          }
+          else {
+            this.innerHTML = this.childNodes[0].value.escapeHTML() + '<input type="hidden" name="[jobNamePattern]" value="' + this.childNodes[0].value + '"/>';
+          }
+          return false;
+        }
+        e = null; <!-- again and again, avoid memory leak -->
+      }});
+    </script>
+</j:jelly>

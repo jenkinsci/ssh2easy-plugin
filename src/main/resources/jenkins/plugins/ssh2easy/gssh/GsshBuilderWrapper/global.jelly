@@ -1,0 +1,55 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!-- nothing to configure -->
+  <j:set var="helpURL" value="/plugin/ssh2easy" />
+  <f:section title="Server Groups Center">
+    <f:entry title="Server Group List :" description="Create the server groups for your projects">
+      <f:repeatable  var="serverGroup" items="${descriptor.serverGroups}">
+        <table width="50%">
+          <f:entry title="Group Name" help="${helpURL}/help-name.html">
+            <f:textbox name="gssh.sg.wrapper.groupName" value="${serverGroup.groupName}"/>
+          </f:entry>
+          <f:entry title="SSH Port" help="${helpURL}/help-port.html">
+            <f:textbox name="gssh.sg.wrapper.port" default="22" value="${serverGroup.port}"/>
+          </f:entry>
+          <f:entry title="User Name" help="${helpURL}/help-username.html">
+            <f:textbox name="gssh.sg.wrapper.username" default="root"  value="${serverGroup.username}"/>
+          </f:entry>
+          <f:entry title="Password" help="${helpURL}/help-password.html">
+            <input class="setting-input" name="gssh.sg.wrapper.password"
+                   type="password" value="${serverGroup.password}"
+    		/>
+          </f:entry>  
+          <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+           </div>
+        </f:entry>
+        </table>
+      </f:repeatable>
+    </f:entry>
+    <f:entry title="Server List :" description="add the server under this server group for your projects">
+	       <f:repeatable var="server" items="${descriptor.servers}">
+	        <table width="50%">
+		    <f:entry title="Server Group:">
+		      <select class="setting-input" name="gssh.s.wrapper.serverGroupName" help="${helpURL}/help-serverselect.html">
+		        <j:forEach var="sg" items="${descriptor.serverGroups}">
+		        	<f:option selected="${sg.groupName==server.serverGroupName}">${sg.groupName}</f:option>
+		         </j:forEach>
+		      </select>
+		    </f:entry>
+	        <f:entry title="Server Name" help="${helpURL}/help-name.html">
+	            <f:textbox name="gssh.s.wrapper.name" value="${server.name}"/>
+	        </f:entry>
+	       	<f:entry title="Server IP" help="${helpURL}/help-ip.html">
+	            <f:textbox name="gssh.s.wrapper.ip" value="${server.ip}"/>
+	        </f:entry>
+	        <f:entry title="">
+	            <div align="right">
+	              <f:repeatableDeleteButton />
+	            </div>
+	        </f:entry>
+	        </table>
+	      </f:repeatable>
+    </f:entry>
+  </f:section>
+</j:jelly>
