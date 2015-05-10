@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <!-- nothing to configure -->
-  <j:set var="helpURL" value="/plugin/ssh2easy-plugin" />
+  <j:set var="helpURL" value="/plugin/ssh2easy" />
   <f:section title="Server Groups Center">
     <f:entry title="Server Group List :" description="Create the server groups for your projects">
       <f:repeatable  var="serverGroup" items="${descriptor.serverGroups}">

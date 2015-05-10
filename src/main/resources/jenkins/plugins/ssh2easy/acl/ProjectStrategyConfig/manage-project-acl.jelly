@@ -93,10 +93,10 @@
     <f:entry title="Project Name:">
       <f:textbox type="text" id="${id}text" />
     </f:entry>
-	<f:entry help="/plugin/ssh2easy-plugin/help-pattern.html" title="View Name Pattern:">
+	<f:entry help="/plugin/ssh2easy/help-pattern.html" title="View Name Pattern:">
       <f:textbox type="text" id="${id}viewNamePattern" />
     </f:entry>
-    <f:entry help="/plugin/ssh2easy-plugin/help-pattern.html" title="Job Name Pattern:">
+    <f:entry help="/plugin/ssh2easy/help-pattern.html" title="Job Name Pattern:">
       <f:textbox type="text" id="${id}jobNamePattern" />
     </f:entry>
     <f:entry>

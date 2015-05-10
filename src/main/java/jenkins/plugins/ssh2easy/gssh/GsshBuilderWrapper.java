@@ -234,7 +234,7 @@ public final class GsshBuilderWrapper extends BuildWrapper {
 
 		@Override
 		public String getHelpFile() {
-			return "/plugin/ssh2easy-plugin/help.html";
+			return "/plugin/ssh2easy/help.html";
 		}
 
 		@Override
