@@ -1,4 +1,4 @@
-package com.cloud.ci.plugins.gssh;
+package jenkins.plugins.ssh2easy.gssh;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import jenkins.plugins.ssh2easy.gssh.client.SshClient;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,8 +26,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-
-import com.cloud.ci.plugins.gssh.client.SshClient;
 
 /**
  * 
@@ -235,7 +234,7 @@ public final class GsshBuilderWrapper extends BuildWrapper {
 
 		@Override
 		public String getHelpFile() {
-			return "/plugin/cloudci/help.html";
+			return "/plugin/ssh2easy/help.html";
 		}
 
 		@Override
