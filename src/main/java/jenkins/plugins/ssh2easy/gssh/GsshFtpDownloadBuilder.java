@@ -1,7 +1,9 @@
 package jenkins.plugins.ssh2easy.gssh;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -22,7 +24,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * GSSH FTP Builder extentation
- * 
+ *
  * @author Jerry Cai
  */
 public class GsshFtpDownloadBuilder extends Builder {
@@ -48,7 +50,7 @@ public class GsshFtpDownloadBuilder extends Builder {
 		this.groupName = Server.parseServerGroupName(this.serverInfo);
 		this.remoteFile = remoteFile;
 		this.localFolder = localFolder;
-		this.fileName = fileName;
+		this.fileName = Util.fixEmptyAndTrim(fileName);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -67,8 +69,9 @@ public class GsshFtpDownloadBuilder extends Builder {
 				getGroupName(), getIp());
 		int exitStatus = -1;
 		try {
-			File file = new File(getRemoteFile());
-			if (null == fileName || fileName.trim().equals("")) {
+			EnvVars env = build.getEnvironment(listener);
+			File file = new File(Util.replaceMacro(getLocalFolder(), env));
+			if (null == fileName) {
 				fileName = file.getName();
 			}
 			exitStatus = sshClient.downloadFile(logger, remoteFile, localFolder, fileName);
@@ -145,15 +148,18 @@ public class GsshFtpDownloadBuilder extends Builder {
 
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+		@Override
 		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
 			return true;
 		}
 
+		@Override
 		public String getDisplayName() {
 			return Messages.SSHFTPDOWNLOAD_DisplayName();
 		}
 
+		@Override
 		public Builder newInstance(StaplerRequest req, JSONObject formData)
 				throws Descriptor.FormException {
 			return req.bindJSON(this.clazz, formData);
