@@ -1,7 +1,9 @@
 package jenkins.plugins.ssh2easy.gssh;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -10,6 +12,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Logger;
 
@@ -21,7 +24,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * GSSH Builder extentation
- * 
+ *
  * @author Jerry Cai
  */
 public class GsshCommandBuilder extends Builder {
@@ -48,7 +51,7 @@ public class GsshCommandBuilder extends Builder {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean perform(AbstractBuild build, Launcher launcher,
-			BuildListener listener) {
+			BuildListener listener) throws IOException, InterruptedException {
 		PrintStream logger = listener.getLogger();
 		GsshBuilderWrapper.printSplit(logger);
 		if(isDisable()){
@@ -59,6 +62,9 @@ public class GsshCommandBuilder extends Builder {
 		// This is where you 'build' the project.
 		SshClient sshHandler = GsshBuilderWrapper.DESCRIPTOR.getSshClient(
 				getGroupName(), getIp());
+
+		EnvVars env = build.getEnvironment(listener);
+		String shell = Util.fixEmptyAndTrim(Util.replaceMacro(getShell(), env));
 		int exitStatus = sshHandler.executeCommand(logger, shell);
 		GsshBuilderWrapper.printSplit(logger);
 		return exitStatus == SshClient.STATUS_SUCCESS;
@@ -114,15 +120,18 @@ public class GsshCommandBuilder extends Builder {
 
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+		@Override
 		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
 			return true;
 		}
 
+		@Override
 		public String getDisplayName() {
 			return Messages.SSHCOMMAND_DisplayName();
 		}
 
+		@Override
 		public Builder newInstance(StaplerRequest req, JSONObject formData)
 				throws Descriptor.FormException {
 			return req.bindJSON(this.clazz, formData);

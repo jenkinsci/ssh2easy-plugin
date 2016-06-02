@@ -20,14 +20,14 @@ import com.jcraft.jsch.UserInfo;
 
 /**
  * This is Ssh handler , user for handling SSH related event and requirments
- * 
+ *
  * @author Jerry Cai
- * 
+ *
  */
 public class DefaultSshClient extends AbstractSshClient {
 
 	public static final String SSH_BEY = "\nexit $?";
-	
+
 	private String ip;
 	private int port;
 	private String username;
@@ -86,6 +86,7 @@ public class DefaultSshClient extends AbstractSshClient {
 		return session;
 	}
 
+	@Override
 	public int uploadFile(PrintStream logger, String fileName,
 			InputStream fileContent, String serverLocation) {
 		Session session = null;
@@ -117,7 +118,9 @@ public class DefaultSshClient extends AbstractSshClient {
 			e.printStackTrace(logger);
 			throw new GsshPluginException(e);
 		} finally {
-			logger.println("[GSSH]-SFTP exit status is " + sftp.getExitStatus());
+			if (sftp != null) {
+				logger.println("[GSSH]-SFTP exit status is " + sftp.getExitStatus());
+			}
 			if (null != out) {
 				try {
 					out.close();
@@ -128,6 +131,7 @@ public class DefaultSshClient extends AbstractSshClient {
 		}
 	}
 
+	@Override
 	public int downloadFile(PrintStream logger, String remoteFile,
 			String localFolder, String fileName) {
 		Session session = null;
@@ -150,7 +154,9 @@ public class DefaultSshClient extends AbstractSshClient {
 			e.printStackTrace(logger);
 			throw new GsshPluginException(e);
 		} finally {
-			logger.println("[GSSH]-SFTP exit status is " + sftp.getExitStatus());
+			if (sftp != null) {
+				logger.println("[GSSH]-SFTP exit status is " + sftp.getExitStatus());
+			}
 			if (null != out) {
 				try {
 					out.close();
@@ -161,10 +167,12 @@ public class DefaultSshClient extends AbstractSshClient {
 		}
 	}
 
+	@Override
 	public int executeShell(PrintStream logger, String shell) {
 		return executeCommand(logger,shell);
 	}
 
+	@Override
 	public int executeCommand(PrintStream logger, String command) {
 
 		Session session = null;
@@ -222,6 +230,7 @@ public class DefaultSshClient extends AbstractSshClient {
 		}
 	}
 
+	@Override
 	public boolean testConnection(PrintStream logger) {
 		try {
 			Session session = createSession(logger);
@@ -249,13 +258,13 @@ public class DefaultSshClient extends AbstractSshClient {
 		String output = fixIEIssue(input);
 //		return SSH_PROFILE + output + SSH_BEY;
 		return output +SSH_BEY;
-//		return  output; 
+//		return  output;
 	}
 
 	/**
 	 * this is fix the IE issue that it's input shell /command auto add '<br>
 	 * ' if \n
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -295,6 +304,7 @@ public class DefaultSshClient extends AbstractSshClient {
 		this.password = password;
 	}
 
+	@Override
 	public String toString() {
 		return "Server Info [" + this.ip + " ," + this.port + ","
 				+ this.username + "," + this.password + "]";

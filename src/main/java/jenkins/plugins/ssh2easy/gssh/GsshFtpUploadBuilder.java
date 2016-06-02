@@ -1,7 +1,10 @@
 package jenkins.plugins.ssh2easy.gssh;
 
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -22,7 +25,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * GSSH FTP Builder extentation
- * 
+ *
  * @author Jerry Cai
  */
 public class GsshFtpUploadBuilder extends Builder {
@@ -48,13 +51,18 @@ public class GsshFtpUploadBuilder extends Builder {
 		this.groupName = Server.parseServerGroupName(this.serverInfo);
 		this.localFilePath = localFilePath;
 		this.remoteLocation = remoteLocation;
-		this.fileName = fileName;
+		this.fileName = Util.fixEmptyAndTrim(fileName);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean perform(AbstractBuild build, Launcher launcher,
 			BuildListener listener) {
+		if (remoteLocation == null) {
+			listener.fatalError("remote location was not specified");
+            return false;
+        }
+
 		PrintStream logger = listener.getLogger();
 		GsshBuilderWrapper.printSplit(logger);
 		if(isDisable()){
@@ -67,13 +75,25 @@ public class GsshFtpUploadBuilder extends Builder {
 				getGroupName(), getIp());
 		int exitStatus = -1;
 		try {
-			File file = new File(getLocalFilePath());
-			if (null == fileName || fileName.trim().equals("")) {
-				fileName = file.getName();
-			}
-			exitStatus = sshClient.uploadFile(logger, fileName, file, remoteLocation);
-			GsshBuilderWrapper.printSplit(logger);
+			EnvVars env = build.getEnvironment(listener);
+			String localFilePath = Util.fixEmptyAndTrim(Util.replaceMacro(getLocalFilePath(), env));
+			String remoteLocation = Util.fixEmptyAndTrim(Util.replaceMacro(getRemoteLocation(), env));
 
+			if (localFilePath != null && remoteLocation != null) {
+				FilePath path = new FilePath(new File(localFilePath));
+				if (path.exists() && path.isDirectory()) {
+					for (FilePath f : path.list()) {
+						exitStatus = sshClient.uploadFile(logger, f.getName(), new File(f.getRemote()), remoteLocation);
+					}
+				} else {
+					File file = new File(localFilePath);
+					if (null == fileName) {
+						fileName = file.getName();
+					}
+					exitStatus = sshClient.uploadFile(logger, fileName, file, remoteLocation);
+				}
+				GsshBuilderWrapper.printSplit(logger);
+			}
 		} catch (Exception e) {
 			return false;
 		}
@@ -146,15 +166,18 @@ public class GsshFtpUploadBuilder extends Builder {
 
 	@Extension
 	public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+		@Override
 		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
 			return true;
 		}
 
+		@Override
 		public String getDisplayName() {
 			return Messages.SSHFTPUPLOAD_DisplayName();
 		}
 
+		@Override
 		public Builder newInstance(StaplerRequest req, JSONObject formData)
 				throws Descriptor.FormException {
 			return req.bindJSON(this.clazz, formData);
