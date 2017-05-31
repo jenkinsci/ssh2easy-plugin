@@ -11,7 +11,7 @@
 	<version>1.5-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>SSH2 Easy Plugin</name>
-	<description>This plugin allows you to ssh2 remote server to execute linux commands , shell , sftp upload, downlaod etc</description>
+	<description>This plugin allows you to ssh2 remote server to execute linux commands, shell, sftp upload, download, etc.</description>
 	<scm>
 		<connection>scm:git:ssh://github.com/jenkinsci/ssh2easy.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ssh2easy.git</developerConnection>
