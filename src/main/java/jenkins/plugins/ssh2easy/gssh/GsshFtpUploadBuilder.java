@@ -76,6 +76,7 @@ public class GsshFtpUploadBuilder extends Builder {
 		int exitStatus = -1;
 		try {
 			EnvVars env = build.getEnvironment(listener);
+            String uploadFileName = Util.fixEmptyAndTrim(Util.replaceMacro(getFileName(), env));
 			String localFilePath = Util.fixEmptyAndTrim(Util.replaceMacro(getLocalFilePath(), env));
 			String remoteLocation = Util.fixEmptyAndTrim(Util.replaceMacro(getRemoteLocation(), env));
 
@@ -83,14 +84,14 @@ public class GsshFtpUploadBuilder extends Builder {
 				FilePath path = new FilePath(new File(localFilePath));
 				if (path.exists() && path.isDirectory()) {
 					for (FilePath f : path.list()) {
-						exitStatus = sshClient.uploadFile(logger, f.getName(), new File(f.getRemote()), remoteLocation);
+						exitStatus = sshClient.uploadFile(logger, uploadFileName, new File(f.getRemote()), remoteLocation);
 					}
 				} else {
 					File file = new File(localFilePath);
 					if (null == fileName) {
 						fileName = file.getName();
 					}
-					exitStatus = sshClient.uploadFile(logger, fileName, file, remoteLocation);
+					exitStatus = sshClient.uploadFile(logger, uploadFileName, file, remoteLocation);
 				}
 				GsshBuilderWrapper.printSplit(logger);
 			}

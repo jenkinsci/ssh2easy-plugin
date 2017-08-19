@@ -17,6 +17,9 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import java.io.FileNotFoundException;
+import com.jcraft.jsch.SftpException;
+import java.io.IOException;
 
 /**
  * This is Ssh handler , user for handling SSH related event and requirments
@@ -101,6 +104,7 @@ public class DefaultSshClient extends AbstractSshClient {
 			Thread.sleep(2000);
 			sftp = (ChannelSftp) channel;
 			sftp.setFilenameEncoding("UTF-8");
+			prepareUpload(sftp, serverLocation, false);
 			sftp.cd(serverLocation);
 			out = sftp.put(fileName, 777);
 			Thread.sleep(2000);
@@ -303,6 +307,52 @@ public class DefaultSshClient extends AbstractSshClient {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public boolean prepareUpload(
+	  ChannelSftp sftpChannel,
+	  String path,
+	  boolean overwrite)
+	  throws SftpException, IOException, FileNotFoundException {
+
+	  boolean result = false;
+
+	  // Build romote path subfolders inclusive:
+	  String[] folders = path.split("/");
+	  for (String folder : folders) {
+	    if (folder.length() > 0) {
+	      // This is a valid folder:
+	      try {
+			    System.out.println("Current Folder path before cd:" + folder);
+	        sftpChannel.cd(folder);
+	      } catch (SftpException e) {
+	        // No such folder yet:
+					System.out.println("Inside create folders: ");
+	        sftpChannel.mkdir(folder);
+	        sftpChannel.cd(folder);
+	      }
+	    }
+	  }
+
+	  // Folders ready. Remove such a file if exists:
+	  if (sftpChannel.ls(path).size() > 0) {
+	    if (!overwrite) {
+	      System.out.println(
+	        "Error - file " + path + " was not created on server. " +
+	        "It already exists and overwriting is forbidden.");
+	    } else {
+	      // Delete file:
+	      sftpChannel.ls(path); // Search file.
+	      sftpChannel.rm(path); // Remove file.
+	      result = true;
+	    }
+	  } else {
+	    // No such file:
+	    result = true;
+	  }
+
+	  return result;
+	}
+
 
 	@Override
 	public String toString() {

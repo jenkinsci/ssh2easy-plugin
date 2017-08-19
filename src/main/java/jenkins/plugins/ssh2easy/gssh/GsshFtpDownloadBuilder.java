@@ -74,6 +74,7 @@ public class GsshFtpDownloadBuilder extends Builder {
 			if (null == fileName) {
 				fileName = file.getName();
 			}
+            remoteFile = Util.replaceMacro(getRemoteFile(), env);
 			exitStatus = sshClient.downloadFile(logger, remoteFile, localFolder, fileName);
 			GsshBuilderWrapper.printSplit(logger);
 		} catch (Exception e) {
