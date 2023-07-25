@@ -3,6 +3,7 @@ package jenkins.plugins.ssh2easy.acl;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.ExtendedHierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
@@ -270,7 +271,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 								.getAttribute(PROJECT_JOB_NAME_PATTERN);
 						Set<Permission> permissions = new HashSet<Permission>();
 
-						String next = reader.peekNextChild();
+                        String next = ((ExtendedHierarchicalStreamReader) reader).peekNextChild();
 						if (next != null && next.equals(PERMISSIONS)) {
 							reader.moveDown();
 							while (reader.hasMoreChildren()) {
@@ -286,7 +287,7 @@ public class CloudCIAuthorizationStrategy extends AuthorizationStrategy {
 								jobNamePattern, permissions);
 						map.addProject(role);
 
-						next = reader.peekNextChild();
+                        next = ((ExtendedHierarchicalStreamReader) reader).peekNextChild();
 						if (next != null && next.equals(ASSIGNED_MEMBER_IDS)) {
 							reader.moveDown();
 							while (reader.hasMoreChildren()) {
