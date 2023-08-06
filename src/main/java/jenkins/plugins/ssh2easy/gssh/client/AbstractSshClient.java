@@ -1,5 +1,7 @@
 package jenkins.plugins.ssh2easy.gssh.client;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import jenkins.plugins.ssh2easy.gssh.GsshPluginException;
@@ -15,6 +18,7 @@ import jenkins.plugins.ssh2easy.gssh.Utils;
 public abstract class AbstractSshClient implements SshClient {
 	public static final String TEMP_PATH = "/var";
 	public static final String LATEEST_EXEC_SHELL_DEBUG = "/var/latest_exec_debug.sh";
+	private static final Random RANDOM = new SecureRandom();
 
 	public int uploadFile(PrintStream logger, String fileName, File file,
 			String serverLocation) {
@@ -48,6 +52,7 @@ public abstract class AbstractSshClient implements SshClient {
 		}
 	}
 
+	@SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "TODO needs triage")
 	public int uploadFile(PrintStream logger, String fileName,
 			String fileContent, String serverLocation) {
 		InputStream bis = new ByteArrayInputStream(fileContent.getBytes());
@@ -69,10 +74,8 @@ public abstract class AbstractSshClient implements SshClient {
 	}
 
 	public int executeShellByFTP(PrintStream logger, InputStream shell) {
-		Random random = new Random();
-
 		String shellName = "tempshell_" + System.currentTimeMillis()
-				+ random.nextInt() + ".sh";
+				+ RANDOM.nextInt() + ".sh";
 		String shellFile = TEMP_PATH + "/" + shellName;
 		try {
 			uploadFile(logger, shellName, shell, TEMP_PATH);
@@ -85,11 +88,10 @@ public abstract class AbstractSshClient implements SshClient {
 	}
 
 	public int executeShellByFTP(PrintStream logger, String shell) {
-		Random random = new Random();
 		logger.println("execute shell as : ");
 		logger.println(shell);
 		String shellName = "tempshell_" + System.currentTimeMillis()
-				+ random.nextInt() + ".sh";
+				+ RANDOM.nextInt() + ".sh";
 
 		String shellFile = TEMP_PATH + "/" + shellName;
 		try {
