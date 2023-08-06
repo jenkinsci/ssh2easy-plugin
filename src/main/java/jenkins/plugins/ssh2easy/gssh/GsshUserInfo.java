@@ -1,41 +1,46 @@
 package jenkins.plugins.ssh2easy.gssh;
 
+import com.jcraft.jsch.UserInfo;
 import java.util.logging.Logger;
 
-import com.jcraft.jsch.UserInfo;
-
 public class GsshUserInfo implements UserInfo {
-	private static final Logger LOGGER = Logger.getLogger(GsshUserInfo.class.getName());
-	
-	String password;
-	String passphrase;
-	
-	public GsshUserInfo(String password){
-		this.password=password;
-		this.passphrase=password;
-		
-	}
-	public String getPassphrase() {
-		return passphrase;
-	}
+    private static final Logger LOGGER = Logger.getLogger(GsshUserInfo.class.getName());
 
-	public String getPassword() {
-		return password;
-	}
+    String password;
+    String passphrase;
 
-	public boolean promptPassword(String message) {
-		return false;
-	}
+    public GsshUserInfo(String password) {
+        this.password = password;
+        this.passphrase = password;
+    }
 
-	public boolean promptPassphrase(String message) {
-		return false;
-	}
+    @Override
+    public String getPassphrase() {
+        return passphrase;
+    }
 
-	public boolean promptYesNo(String message) {
-		return false;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	public void showMessage(String message) {
-		LOGGER.info(message);
-	}
+    @Override
+    public boolean promptPassword(String message) {
+        return false;
+    }
+
+    @Override
+    public boolean promptPassphrase(String message) {
+        return false;
+    }
+
+    @Override
+    public boolean promptYesNo(String message) {
+        return false;
+    }
+
+    @Override
+    public void showMessage(String message) {
+        LOGGER.info(message);
+    }
 }
