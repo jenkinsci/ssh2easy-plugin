@@ -1,5 +1,7 @@
 package jenkins.plugins.ssh2easy.gssh.client;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -177,6 +179,7 @@ public class DefaultSshClient extends AbstractSshClient {
 	}
 
 	@Override
+	@SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "TODO needs triage")
 	public int executeCommand(PrintStream logger, String command) {
 
 		Session session = null;

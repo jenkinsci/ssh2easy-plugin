@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin allows you to ssh2 remote server to execute linux commands, shell, sftp upload, download, etc. 
 </div>

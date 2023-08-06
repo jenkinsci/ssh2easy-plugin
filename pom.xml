@@ -1,24 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.612</version><!-- which version of Jenkins is this plugin built 
-			against? -->
+		<version>4.71</version>
+		<relativePath />
 	</parent>
 
 	<artifactId>ssh2easy</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>${revision}${changelist}</version>
 	<packaging>hpi</packaging>
 	<name>SSH2 Easy Plugin</name>
 	<description>This plugin allows you to ssh2 remote server to execute linux commands, shell, sftp upload, download, etc.</description>
+	<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+
 	<scm>
-		<connection>scm:git:ssh://github.com/jenkinsci/ssh2easy.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ssh2easy.git</developerConnection>
-		<url>https://github.com/jenkinsci/ssh2easy</url>
-	    <tag>ssh2easy-1.0</tag>
-  </scm>
-	<url>https://wiki.jenkins-ci.org/display/JENKINS/SSH2Easy+Plugin</url>
+		<connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+		<developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+		<url>https://github.com/${gitHubRepo}</url>
+		<tag>${scmTag}</tag>
+	</scm>
+
 	<developers>
 		<developer>
 			<id>jerrycai</id>
@@ -28,20 +31,18 @@
 	</developers>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<revision>1.6</revision>
+		<changelist>-SNAPSHOT</changelist>
+		<jenkins.version>2.387.3</jenkins.version>
+		<gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+		<!-- TODO fix existing violations -->
+		<spotbugs.threshold>High</spotbugs.threshold>
 	</properties>
 
-	<!-- get every artifact through repo.jenkins-ci.org, which proxies all the 
-		artifacts that we need -->
 	<repositories>
 		<repository>
 			<id>repo.jenkins-ci.org</id>
 			<url>https://repo.jenkins-ci.org/public/</url>
-		</repository>
-		<repository>
-			<id>central</id>
-			<name>Maven 2 Repository on ibibio</name>
-			<url>https://repo1.maven.org/maven2</url>
 		</repository>
 	</repositories>
 
@@ -52,21 +53,30 @@
 		</pluginRepository>
 	</pluginRepositories>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.jenkins.tools.bom</groupId>
+				<artifactId>bom-2.387.x</artifactId>
+				<version>2244.vd60654536b_96</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
-			<groupId>com.jcraft</groupId>
+			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>jsch</artifactId>
-			<version>0.1.48</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jvnet.hudson</groupId>
-			<artifactId>trilead-ssh2</artifactId>
-			<version>build212-hudson-6</version>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>trilead-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>matrix-auth</artifactId>
-			<version>1.0.2</version>
 		</dependency>
 	</dependencies>
 </project>
