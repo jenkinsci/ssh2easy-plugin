@@ -16,7 +16,7 @@ import java.io.PrintStream;
 import jenkins.plugins.ssh2easy.gssh.GsshPluginException;
 import jenkins.plugins.ssh2easy.gssh.GsshUserInfo;
 import jenkins.plugins.ssh2easy.gssh.ServerGroup;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * This is Ssh handler , user for handling SSH related event and requirments
@@ -266,7 +266,7 @@ public class DefaultSshClient extends AbstractSshClient {
      * @return
      */
     private String fixIEIssue(String input) {
-        return StringEscapeUtils.unescapeHtml(input);
+        return StringEscapeUtils.unescapeHtml4(input);
     }
 
     public String getIp() {

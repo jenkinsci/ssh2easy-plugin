@@ -13,11 +13,11 @@ import hudson.util.FormValidation;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import jenkins.plugins.ssh2easy.gssh.client.SshClient;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -123,7 +123,7 @@ public final class GsshBuilderWrapper extends BuildWrapper {
     }
 
     private void log(final PrintStream logger, final String message) {
-        logger.println(StringUtils.defaultString(DESCRIPTOR.getShortName()) + message);
+        logger.println(Objects.toString(DESCRIPTOR.getShortName(), "") + message);
     }
 
     public boolean isDisable() {
